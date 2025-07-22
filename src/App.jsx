@@ -1,9 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
+const debounce = (callback, delay) => {
+  let timer;
+  return (value) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback(value);
+    }, delay);
+  };
+};
 
 function App() {
   const [query, setQuery] = useState('');
   const [suggestion, setSuggestion] = useState([]);
-  console.log(suggestion);
 
   // Funzione che recupera i prodotti
   const fetchProducts = async (query) => {
@@ -20,9 +29,14 @@ function App() {
     };
   };
 
+  const debouncedFetchProducts = useCallback(
+    debounce(fetchProducts, 500
+
+    ), [])
+
   // Eseguo il fetch dei prodotti ogni volta che la query viene modificata
   useEffect(() => {
-    fetchProducts(query);
+    debouncedFetchProducts(query);
   }, [query]);
 
   return (
